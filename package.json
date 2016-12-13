@@ -1,0 +1,8 @@
+{
+  "name": "token_auth_tutorial",
+  "version": "1.0.0",
+  "description": "Tutorial: Authenticate a Node.js API with JSON Web Tokens",
+  "main": "server.js",
+  "author": "Zouhair Mahieddine <zouhair.mahieddine@gmail.com>",
+  "license": "MIT"
+}
