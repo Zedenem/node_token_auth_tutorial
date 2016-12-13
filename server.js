@@ -25,6 +25,21 @@ app.get('/', (req, res) => {
   res.send('Welcome to this Tutorial. The API is located at <strong>/api</strong>');
 });
 
+app.get('/setup', (req, res) => {
+  // Create a sample user
+  const newUser = new User({
+    name: 'Nick Cerminara',
+    password: 'password',
+    admin: true,
+  });
+
+  // Save the sample user
+  newUser.save.then(
+    (user) => { res.json({success: true}); },
+    (err) => { throw err; },
+  );
+});
+
 /* Start */
 app.listen(port);
 console.log(`API now running on port ${port}`);
