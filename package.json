@@ -5,11 +5,22 @@
   "main": "server.js",
   "author": "Zouhair Mahieddine <zouhair.mahieddine@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "start:mongo": "mongod --fork --logpath /dev/null",
+    "stop:mongo": "mongo admin --eval 'db.shutdownServer()' > /dev/null"
+  },
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "jsonwebtoken": "^7.2.1",
+    "mongoose": "^4.7.2",
+    "morgan": "^1.7.0"
+  },
   "devDependencies": {
     "eslint": "3.12.1",
     "eslint-config-airbnb": "13.0.0",
     "eslint-plugin-import": "2.2.0",
-    "eslint-plugin-jsx-a11y": "3.0.1",
+    "eslint-plugin-jsx-a11y": "^2.2.3",
     "eslint-plugin-react": "6.8.0"
   }
 }
