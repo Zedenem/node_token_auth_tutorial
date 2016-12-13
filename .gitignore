@@ -1,0 +1,22 @@
+#Based on: https://gist.github.com/pmq20/2887714
+
+lib-cov
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
+
+.DS_Store
+*/.DS_Store
+
+pids
+logs
+results
+coverage
+
+node_modules
+npm-debug.log
+yarn-error.log
