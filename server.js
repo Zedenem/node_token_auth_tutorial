@@ -11,9 +11,8 @@ const User = require('./app/models/user');
 
 /* Configuration */
 const app = express();
-var port = process.env.PORT || 8080;
+const port = process.env.PORT || 8080;
 mongoose.connect(config.database);
-app.set('secret', config.secret);
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -34,9 +33,9 @@ app.get('/setup', (req, res) => {
   });
 
   // Save the sample user
-  newUser.save.then(
-    (user) => { res.json({success: true}); },
-    (err) => { throw err; },
+  newUser.save().then(
+    (user) => { res.json({ success: true }); },
+    (err) => { throw err; }
   );
 });
 
@@ -53,7 +52,27 @@ apiRouter.get('/', (req, res) => {
 apiRouter.get('/users', (req, res) => {
   User.find().then(
     (users) => { res.json(users); },
-    (err) => { throw err; },
+    (err) => { throw err; }
+  );
+});
+
+apiRouter.post('/authenticate', (req, res) => {
+  User.findOne({ name: req.body.name }).then(
+    (user) => {
+      if (!user) {
+        res.json({ success: false, message: 'Authentication failed. User not found.' });
+      } else if (user.password !== req.body.password) {
+        res.json({ success: false, message: 'Authentication failed. Wrong password.' });
+      } else {
+        const token = jsonWebToken.sign(user, config.secret, { expiresIn: '1d' });
+        res.json({
+          success: true,
+          message: 'Authentication succeeded. Token provided.',
+          token: token
+        });
+      }
+    },
+    (err) => { throw err; }
   );
 });
 
