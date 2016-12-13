@@ -20,7 +20,7 @@ app.use(bodyParser.json());
 
 app.use(morgan('dev')); // Log Requests to the Console
 
-/* Routes */
+/* Basic Routes */
 app.get('/', (req, res) => {
   res.send('Welcome to this Tutorial. The API is located at <strong>/api</strong>');
 });
@@ -39,6 +39,25 @@ app.get('/setup', (req, res) => {
     (err) => { throw err; },
   );
 });
+
+/* API Routes */
+const apiRouter = express.Router();
+
+// TODO: route to authenticate a user (POST http://localhost:8080/api/authenticate)
+// TODO: route middleware to verify a token
+
+apiRouter.get('/', (req, res) => {
+  res.json({ message: 'Welcome to the coolest API on Earth!' });
+});
+
+apiRouter.get('/users', (req, res) => {
+  User.find().then(
+    (users) => { res.json(users); },
+    (err) => { throw err; },
+  );
+});
+
+app.use('/api', apiRouter);
 
 /* Start */
 app.listen(port);
