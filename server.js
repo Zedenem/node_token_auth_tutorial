@@ -11,6 +11,7 @@ const User = require('./app/models/user');
 
 /* Configuration */
 const app = express();
+app.set('secret', config.secret);
 const port = process.env.PORT || 8080;
 mongoose.connect(config.database);
 
@@ -28,6 +29,8 @@ app.get('/setup', (req, res) => {
   // Create a sample user
   const newUser = new User({
     name: 'Nick Cerminara',
+    // Security flaw (beyond the obvious hard-coded stupid password):
+    // passwords should be encrypted, using bcrypt for example
     password: 'password',
     admin: true,
   });
@@ -42,20 +45,6 @@ app.get('/setup', (req, res) => {
 /* API Routes */
 const apiRouter = express.Router();
 
-// TODO: route to authenticate a user (POST http://localhost:8080/api/authenticate)
-// TODO: route middleware to verify a token
-
-apiRouter.get('/', (req, res) => {
-  res.json({ message: 'Welcome to the coolest API on Earth!' });
-});
-
-apiRouter.get('/users', (req, res) => {
-  User.find().then(
-    (users) => { res.json(users); },
-    (err) => { throw err; }
-  );
-});
-
 apiRouter.post('/authenticate', (req, res) => {
   User.findOne({ name: req.body.name }).then(
     (user) => {
@@ -64,7 +53,8 @@ apiRouter.post('/authenticate', (req, res) => {
       } else if (user.password !== req.body.password) {
         res.json({ success: false, message: 'Authentication failed. Wrong password.' });
       } else {
-        const token = jsonWebToken.sign(user, config.secret, { expiresIn: '1d' });
+        // Security flaw: remove password from object before signing it (JWT doesn't encrypt by default, it base64 encodes only)
+        const token = jsonWebToken.sign(user, app.get('secret'), { expiresIn: '1d' });
         res.json({
           success: true,
           message: 'Authentication succeeded. Token provided.',
@@ -72,6 +62,34 @@ apiRouter.post('/authenticate', (req, res) => {
         });
       }
     },
+    (err) => { throw err; }
+  );
+});
+
+apiRouter.use((req, res, next) => {
+  const token = req.body.token || req.query.token || req.headers['x-access-token'];
+
+  if (token) {
+    jsonWebToken.verify(token, app.get('secret'), (err, decoded) => {
+      if (err) {
+        res.json({ success: false, message: 'Failed to authenticate token.'});
+      } else {
+        req.decoded = decoded;
+        next();
+      }
+    });
+  } else {
+    res.status(403).send({ success: false, message: 'Missing token.' });
+  }
+});
+
+apiRouter.get('/', (req, res) => {
+  res.json({ message: 'Welcome to the coolest API on Earth!' });
+});
+
+apiRouter.get('/users', (req, res) => {
+  User.find().then(
+    (users) => { res.json(users); },
     (err) => { throw err; }
   );
 });
