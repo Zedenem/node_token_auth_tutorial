@@ -7,10 +7,10 @@ const jsonWebToken = require('jsonwebtoken');
 
 /* Internal Requirements */
 const config = require('./config');
-const User = require('./app/models/user');
+const User = require('./src/models/user');
 
 // Load Routers
-const authRouter = require('./app/routers/auth-router');
+const authRouter = require('./src/routers/auth-router');
 
 /* Configuration */
 const app = express();
