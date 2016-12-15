@@ -1,6 +1,7 @@
 // Handle routes prefixed by "/auth/"
 const jsonWebToken = require('jsonwebtoken');
 
+const authController = require('../controllers/auth-controller');
 const config = require('../../config');
 const User = require('../models/user');
 
@@ -26,5 +27,7 @@ router.post('/signin', (req, res) => {
     (err) => { throw err; }
   );
 });
+
+router.get('/signout', authController.signout);
 
 module.exports = router;
