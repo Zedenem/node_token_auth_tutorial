@@ -7,15 +7,17 @@ const jsonWebToken = require('jsonwebtoken');
 
 /* Internal Requirements */
 const config = require('./config');
-const User = require('./src/models/user');
+const User = require('./models/user');
 
 // Load Routers
-const authRouter = require('./src/routers/auth-router');
+const authRouter = require('./routers/auth-router');
 
 /* Configuration */
 const app = express();
 app.set('secret', config.secret);
 const port = process.env.PORT || 8080;
+// Set mongoose.Promise to the default ES6 Promise implementation
+mongoose.Promise = global.Promise;
 mongoose.connect(config.database);
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -40,8 +42,8 @@ app.get('/setup', (req, res) => {
 
   // Save the sample user
   newUser.save().then(
-    (user) => { res.json({ success: true }); },
-    (err) => { throw err; }
+    () => { res.json({ success: true }); },
+    (err) => { throw err; },
   );
 });
 
@@ -56,7 +58,7 @@ apiRouter.use((req, res, next) => {
   if (token) {
     jsonWebToken.verify(token, app.get('secret'), (err, decoded) => {
       if (err) {
-        res.status(403).json({ success: false, message: 'Failed to authenticate token.'});
+        res.status(403).json({ success: false, message: 'Failed to authenticate token.' });
       } else {
         req.decoded = decoded;
         next();
@@ -72,10 +74,9 @@ apiRouter.get('/', (req, res) => {
 });
 
 apiRouter.get('/users', (req, res) => {
-  User.find().then(
-    (users) => { res.json(users); },
-    (err) => { throw err; }
-  );
+  User.find()
+  .catch(err => res.status(400).send(err))
+  .then(users => res.json(users));
 });
 
 app.use('/api', apiRouter);

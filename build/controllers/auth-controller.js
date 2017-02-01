@@ -1,13 +1,15 @@
-const jsonWebToken = require('jsonwebtoken');
+'use strict';
 
-const config = require('../config');
+var jsonWebToken = require('jsonwebtoken');
+
+var config = require('../config');
 // const User = require('../models/user');
-const authService = require('../services/auth-service');
+var authService = require('../services/auth-service');
 
 function signin(req, res) {
-  authService.verifyUser(req.body.name)
-  .catch((err) => { throw err; })
-  .then((user) => {
+  authService.verifyUser(req.body.name).catch(function (err) {
+    throw err;
+  }).then(function (user) {
     if (!user) {
       res.json({ success: false, message: 'Authentication failed. User not found.' });
     } else if (user.password !== req.body.password) {
@@ -15,11 +17,11 @@ function signin(req, res) {
     } else {
       // Security flaw: remove password from object
       // before signing it (JWT doesn't encrypt by default, it base64 encodes only)
-      const token = jsonWebToken.sign(user, config.secret, { expiresIn: '1d' });
+      var token = jsonWebToken.sign(user, config.secret, { expiresIn: '1d' });
       res.json({
         success: true,
         message: 'Authentication succeeded. Token provided.',
-        token,
+        token: token
       });
     }
   });
@@ -31,3 +33,4 @@ function signout(req, res) {
   res.redirect('/');
 }
 exports.signout = signout;
+//# sourceMappingURL=auth-controller.js.map

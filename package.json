@@ -6,21 +6,25 @@
   "author": "Zouhair Mahieddine <zouhair.mahieddine@gmail.com>",
   "license": "MIT",
   "scripts": {
+    "build": "babel -w src/ -d build -s",
+    "start": "node ./build/server.js",
     "start:mongo": "mongod --fork --logpath /dev/null",
     "stop:mongo": "mongo admin --eval 'db.shutdownServer()' > /dev/null"
   },
   "dependencies": {
-    "body-parser": "^1.15.2",
-    "express": "^4.14.0",
+    "body-parser": "^1.16.0",
+    "express": "^4.14.1",
     "jsonwebtoken": "^7.2.1",
-    "mongoose": "^4.7.2",
+    "mongoose": "^4.8.1",
     "morgan": "^1.7.0"
   },
   "devDependencies": {
-    "eslint": "3.12.1",
-    "eslint-config-airbnb": "13.0.0",
+    "babel-cli": "6.22.2",
+    "babel-preset-latest": "^6.22.0",
+    "eslint": "^3.14.1",
+    "eslint-config-airbnb": "^14.0.0",
     "eslint-plugin-import": "2.2.0",
-    "eslint-plugin-jsx-a11y": "^2.2.3",
-    "eslint-plugin-react": "6.8.0"
+    "eslint-plugin-jsx-a11y": "^3.0.2",
+    "eslint-plugin-react": "^6.9.0"
   }
 }
