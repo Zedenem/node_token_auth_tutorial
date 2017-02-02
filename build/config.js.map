@@ -1,1 +1,0 @@
-{"version":3,"sources":["../src/config.js"],"names":["module","exports","secret","database"],"mappings":";;AAAAA,OAAOC,OAAP,GAAiB;AACfC,UAAQ,0BADO;AAEfC,YAAU;AAFK,CAAjB","file":"config.js","sourcesContent":["module.exports = {\n  secret: 'thisismyverysecretsecret',\n  database: 'mongodb://localhost:27017/token_auth_tutorial',\n};\n"]}
