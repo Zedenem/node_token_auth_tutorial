@@ -10,12 +10,11 @@ function authenticateUser(username, password) {
   .catch(err => err)
   .then((user) => {
     if (!user) {
-      // return user unknown promise
+      return Promise.reject({ success: false, message: 'Authentication failed. User not found.' });
     } else if (user.password !== password) {
-      // return wrong password promise
-    } else {
-      // return success promise
+      return Promise.reject({ success: false, message: 'Authentication failed. Wrong password.' });
     }
+    return Promise.resolve(user);
   });
 }
 exports.authenticateUser = authenticateUser;

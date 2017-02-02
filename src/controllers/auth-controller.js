@@ -5,29 +5,22 @@ const config = require('../config');
 const authService = require('../services/auth-service');
 
 function signin(req, res) {
-  authService.verifyUser(req.body.name)
-  .catch((err) => { throw err; })
+  authService.authenticateUser(req.body.name, req.body.password)
   .then((user) => {
-    if (!user) {
-      res.json({ success: false, message: 'Authentication failed. User not found.' });
-    } else if (user.password !== req.body.password) {
-      res.json({ success: false, message: 'Authentication failed. Wrong password.' });
-    } else {
-      // Security flaw: remove password from object
-      // before signing it (JWT doesn't encrypt by default, it base64 encodes only)
-      const token = jsonWebToken.sign(user, config.secret, { expiresIn: '1d' });
-      res.json({
-        success: true,
-        message: 'Authentication succeeded. Token provided.',
-        token,
-      });
-    }
-  });
+    res.json({
+      success: true,
+      message: 'Authentication succeeded. Token provided.',
+      token: jsonWebToken.sign(user, config.secret, { expiresIn: '1d' }),
+    });
+  })
+  .catch(err => res.status(401).send(err));
 }
 exports.signin = signin;
 
 function signout(req, res) {
   // TODO: Invalidate the token
+  req.logout();
+  req.session.destroy();
   res.redirect('/');
 }
 exports.signout = signout;
