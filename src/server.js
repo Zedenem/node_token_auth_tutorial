@@ -30,23 +30,6 @@ app.get('/', (req, res) => {
   res.send('Welcome to this Tutorial. The API is located at <strong>/api</strong>');
 });
 
-app.get('/setup', (req, res) => {
-  // Create a sample user
-  const newUser = new User({
-    name: 'Nick Cerminara',
-    // Security flaw (beyond the obvious hard-coded stupid password):
-    // passwords should be encrypted, using bcrypt for example
-    password: 'password',
-    admin: true,
-  });
-
-  // Save the sample user
-  newUser.save().then(
-    () => { res.json({ success: true }); },
-    (err) => { throw err; },
-  );
-});
-
 /* API Routes */
 app.use('/api/auth/', authRouter);
 
