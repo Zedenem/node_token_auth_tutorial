@@ -12,6 +12,7 @@
     "stop:mongo": "mongo admin --eval 'db.shutdownServer()' > /dev/null"
   },
   "dependencies": {
+    "bcrypt": "^1.0.2",
     "body-parser": "^1.16.0",
     "express": "^4.14.1",
     "jsonwebtoken": "^7.2.1",

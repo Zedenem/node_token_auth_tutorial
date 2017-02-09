@@ -11,4 +11,4 @@ function listUsers(req, res) {
     err => res.status(400).send(err),
   );
 }
-exports.getUsers = listUsers;
+exports.listUsers = listUsers;
