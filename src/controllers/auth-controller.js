@@ -18,10 +18,16 @@ function signin(req, res) {
 exports.signin = signin;
 
 function signout(req, res) {
-  // TODO: Invalidate the token
-  req.logout();
-  req.session.destroy();
-  res.redirect('/');
+  const token = req.body.token || req.query.token || req.headers['x-access-token'];
+  authService.invalidateToken(token).then(
+  () => {
+    res.json({
+      success: true,
+      message: 'Sign Out successful.',
+    });
+  },
+  err => res.status(401).send(err),
+  );
 }
 exports.signout = signout;
 

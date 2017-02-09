@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const Blacktoken = require('../models/blacktoken');
 
 function verifyUser(username) {
   return User.findOne({ username });
@@ -32,3 +33,25 @@ function createUser(username, password, admin) {
   return newUser.save();
 }
 exports.createUser = createUser;
+
+function invalidateToken(token) {
+  const newBlacktoken = new Blacktoken({
+    token,
+  });
+
+  return newBlacktoken.save();
+}
+exports.invalidateToken = invalidateToken;
+
+function isTokenValid(token) {
+  return Blacktoken.findOne({ token }).then(
+    (blacktoken) => {
+      if (!blacktoken) {
+        return Promise.resolve();
+      }
+      return Promise.reject({ success: false, message: 'Token blacklisted.' });
+    },
+    err => err,
+  );
+}
+exports.isTokenValid = isTokenValid;
