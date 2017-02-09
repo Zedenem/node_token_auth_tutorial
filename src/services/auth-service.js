@@ -2,6 +2,7 @@ const User = require('../models/user');
 const Blacktoken = require('../models/blacktoken');
 
 function verifyUser(username) {
+  // TODO: Use find instead of findOne for performance purposes
   return User.findOne({ username });
 }
 

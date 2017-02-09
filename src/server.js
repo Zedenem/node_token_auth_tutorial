@@ -6,17 +6,17 @@ const mongoose = require('mongoose');
 
 /* Internal Requirements */
 const config = require('./config');
-const User = require('./models/user');
 
 // Load Routers
 const authRouter = require('./routers/auth-router');
-const authController = require('./controllers/auth-controller');
+const apiRouter = require('./routers/api-router');
 
 /* Configuration */
 const app = express();
 app.set('secret', config.secret);
 const port = process.env.PORT || 8080;
 // Set mongoose.Promise to the default ES6 Promise implementation
+// TODO: User bluebird instead of global for performance purposes
 mongoose.Promise = global.Promise;
 mongoose.connect(config.database);
 
@@ -32,20 +32,7 @@ app.get('/', (req, res) => {
 
 /* API Routes */
 app.use('/api/auth/', authRouter);
-
-const apiRouter = express.Router();
-
-apiRouter.get('/', authController.isAuthenticated, (req, res) => {
-  res.json({ message: 'Welcome to the coolest API on Earth!' });
-});
-
-apiRouter.get('/users', authController.isAuthenticated, (req, res) => {
-  User.find()
-  .catch(err => res.status(400).send(err))
-  .then(users => res.json(users));
-});
-
-app.use('/api', apiRouter);
+app.use('/api/', apiRouter);
 
 /* Start */
 app.listen(port);

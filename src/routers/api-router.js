@@ -1,10 +1,10 @@
 // Handle routes prefixed by "/api"
 const authController = require('../controllers/auth-controller');
+const apiController = require('../controllers/api-controller');
 
 const router = require('express').Router();
 
-router.post('/signin', authController.signin);
-router.get('/signout', authController.signout);
-router.post('/signup', authController.signup);
+router.get('/', authController.isAuthenticated, apiController.getWelcome);
+router.get('/users', authController.isAuthenticated, apiController.listUsers);
 
 module.exports = router;
