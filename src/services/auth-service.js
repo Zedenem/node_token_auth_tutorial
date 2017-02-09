@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const validator = require('validator');
 
 const User = require('../models/user');
 const Blacktoken = require('../models/blacktoken');
@@ -31,6 +32,9 @@ function authenticateUser(username, password) {
 exports.authenticateUser = authenticateUser;
 
 function createUser(username, password, admin) {
+  if (!validator.isEmail(username)) {
+    return Promise.reject({ success: false, message: 'Username is not a valid email address.' });
+  }
   return verifyUser(username).then(
     (user) => {
       if (user) {
