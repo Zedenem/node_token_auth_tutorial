@@ -12,36 +12,45 @@ function verifyUser(username) {
 
 function authenticateUser(username, password) {
   return verifyUser(username).then(
-  (user) => {
-    if (!user) {
-      return Promise.reject({ success: false, message: 'Authentication failed. User not found.' });
-    }
-    return bcrypt.compare(password, user.password).then(
-      (res) => {
-        if (res !== true) {
-          return Promise.reject({ success: false, message: 'Authentication failed. Wrong password.' });
-        }
-        return Promise.resolve(user);
-      },
-    );
-  },
-  err => err);
+    (user) => {
+      if (!user) {
+        return Promise.reject({ success: false, message: 'Authentication failed. User not found.' });
+      }
+      return bcrypt.compare(password, user.password).then(
+        (res) => {
+          if (res !== true) {
+            return Promise.reject({ success: false, message: 'Authentication failed. Wrong password.' });
+          }
+          return Promise.resolve(user);
+        },
+      );
+    },
+    err => err,
+  );
 }
 exports.authenticateUser = authenticateUser;
 
 function createUser(username, password, admin) {
-  // Create a sample user
-  return bcrypt.hash(password, saltRounds).then(
-    (hashedPassword) => {
-      const newUser = new User({
-        username,
-        password: hashedPassword,
-        admin,
-      });
+  return verifyUser(username).then(
+    (user) => {
+      if (user) {
+        return Promise.reject({ success: false, message: 'Username is not available.' });
+      }
+      return bcrypt.hash(password, saltRounds).then(
+        (hashedPassword) => {
+          const newUser = new User({
+            username,
+            password: hashedPassword,
+            admin,
+          });
 
-      // Save the sample user
-      return newUser.save();
-    });
+          // Save the sample user
+          return newUser.save();
+        },
+      );
+    },
+    err => err,
+  );
 }
 exports.createUser = createUser;
 
