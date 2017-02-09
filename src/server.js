@@ -3,7 +3,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
-const jsonWebToken = require('jsonwebtoken');
 
 /* Internal Requirements */
 const config = require('./config');
@@ -11,7 +10,7 @@ const User = require('./models/user');
 
 // Load Routers
 const authRouter = require('./routers/auth-router');
-const authService = require('./services/auth-service');
+const authController = require('./controllers/auth-controller');
 
 /* Configuration */
 const app = express();
@@ -36,33 +35,11 @@ app.use('/api/auth/', authRouter);
 
 const apiRouter = express.Router();
 
-apiRouter.use((req, res, next) => {
-  const token = req.body.token || req.query.token || req.headers['x-access-token'];
-
-  if (token) {
-    authService.isTokenValid(token).then(
-      () => {
-        jsonWebToken.verify(token, app.get('secret'), (err, decoded) => {
-          if (err) {
-            res.status(403).json({ success: false, message: 'Failed to authenticate token.' });
-          } else {
-            req.decoded = decoded;
-            next();
-          }
-        });
-      },
-      err => res.status(403).send(err),
-    );
-  } else {
-    res.status(403).send({ success: false, message: 'Missing token.' });
-  }
-});
-
-apiRouter.get('/', (req, res) => {
+apiRouter.get('/', authController.isAuthenticated, (req, res) => {
   res.json({ message: 'Welcome to the coolest API on Earth!' });
 });
 
-apiRouter.get('/users', (req, res) => {
+apiRouter.get('/users', authController.isAuthenticated, (req, res) => {
   User.find()
   .catch(err => res.status(400).send(err))
   .then(users => res.json(users));
