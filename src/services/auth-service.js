@@ -34,6 +34,10 @@ exports.authenticateUser = authenticateUser;
 function createUser(username, password, admin) {
   if (!validator.isEmail(username)) {
     return Promise.reject({ success: false, message: 'Username is not a valid email address.' });
+  } else if (!validator.isLength(password, { min: 8, max: undefined })) {
+    return Promise.reject({ success: false, message: 'Password is too short.' });
+  } else if (validator.isAlpha(password)) {
+    return Promise.reject({ success: false, message: 'Password should contain at least one non-alpha character.' });
   }
   return verifyUser(username).then(
     (user) => {
