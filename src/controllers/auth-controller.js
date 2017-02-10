@@ -33,7 +33,13 @@ exports.signout = signout;
 
 function signup(req, res) {
   authService.createUser(req.body.username, req.body.password, req.body.admin).then(
-    () => res.json({ success: true }),
+    (user) => {
+      res.json({
+        success: true,
+        message: 'Account created successfully. Token provided.',
+        token: jsonWebToken.sign(user, config.secret, { expiresIn: '1d' }),
+      });
+    },
     err => res.status(401).send(err),
   );
 }
