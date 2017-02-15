@@ -1,4 +1,4 @@
-// Handle routes prefixed by "/auth"
+// Handle routes prefixed by "/api/auth"
 const authController = require('../controllers/auth-controller');
 
 const router = require('express').Router();

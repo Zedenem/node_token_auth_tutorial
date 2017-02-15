@@ -1,8 +1,8 @@
 /* External Requirements */
-const express = require('express');
 const bodyParser = require('body-parser');
-const morgan = require('morgan');
+const express = require('express');
 const mongoose = require('mongoose');
+const morgan = require('morgan');
 
 /* Internal Requirements */
 const config = require('./config');
@@ -14,16 +14,16 @@ const apiRouter = require('./routers/api-router');
 /* Configuration */
 const app = express();
 app.set('secret', config.secret);
-const port = process.env.PORT || 8080;
 // Set mongoose.Promise to the default ES6 Promise implementation
-// TODO: User bluebird instead of global for performance purposes
+// TODO: Use bluebird instead of global for performance purposes
 mongoose.Promise = global.Promise;
 mongoose.connect(config.database);
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.use(morgan('dev')); // Log Requests to the Console
+// Log Requests to the Console
+app.use(morgan('dev'));
 
 /* Basic Routes */
 app.get('/', (req, res) => {
@@ -35,5 +35,6 @@ app.use('/api/auth/', authRouter);
 app.use('/api/', apiRouter);
 
 /* Start */
+const port = process.env.PORT || 8080;
 app.listen(port);
 console.log(`API now running on port ${port}`);
